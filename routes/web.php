@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\EmployeesController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{timezone?}', function ($timezone = null) {
+Route::get('/time/{timezone?}', function ($timezone = null) {
     if (!empty($timezone)) {
         $time = new DateTime(date('Y-m-d H:i:s'), new DateTimeZone('UTC'));
         $time ->setTimezone(new DateTimeZone(str_replace('-', '/', $timezone)));
@@ -52,4 +54,16 @@ Route::prefix('customer')->group(function () {
     Route::delete('{id}', function () {
         //Xoa thong tin khach hang
     });
+});
+
+Route::get('/home', function () {
+    return view('home');
+});
+
+
+Route::prefix('employees')->group(function () {
+    Route::get('/', [EmployeesController::class, 'getAll'])->name('employees.list');
+    Route::get('/{id}/detail', [EmployeesController::class, 'getById'])->name('employees.detail');
+    Route::get('/create', [EmployeesController::class, 'create'])->name('employees.create');
+    Route::post('/create', [EmployeesController::class, 'store'])->name('employees.store');
 });
